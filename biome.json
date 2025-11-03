@@ -17,9 +17,15 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "a11y": {
+        "useSemanticElements": "off"
+      },
       "recommended": true,
       "suspicious": {
         "noUnknownAtRules": "off"
+      },
+      "style": {
+        "useImportType": "off"
       }
     },
     "domains": {
@@ -32,6 +38,14 @@
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "jsxQuoteStyle": "single",
+      "trailingCommas": "none"
     }
   }
 }
