@@ -1,13 +1,10 @@
 'use client'
 
-import { useSuspensePosts } from '@/features/documents/suspense'
-
 export default function List() {
-  const users = useSuspensePosts()
-
   return (
-    <div className='flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black'>
-      {JSON.stringify(users.data)}
+    <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
+      <div className='grid auto-rows-min gap-4 md:grid-cols-3'>hi</div>
+      <div className='bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min' />
     </div>
   )
 }
