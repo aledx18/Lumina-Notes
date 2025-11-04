@@ -86,6 +86,10 @@ model Document {
     icon        String?
     isPublished Boolean  @default(false)
 
+    parentDocumentId String?
+    parentDocument   Document?  @relation("DocumentHierarchy", fields: [parentDocumentId], references: [id], onDelete: Cascade)
+    childDocuments   Document[] @relation("DocumentHierarchy")
+
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

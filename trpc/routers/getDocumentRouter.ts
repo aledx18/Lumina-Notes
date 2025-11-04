@@ -30,19 +30,47 @@ export const getDocumentRouter = createTRPCRouter({
         }
       })
     }),
-  getMany: protectedProcedure.query(async ({ ctx }) => {
-    return await prisma.document.findMany({
-      where: {
-        userId: ctx.auth.user.id
-      }
+  getMany: protectedProcedure
+    .input(
+      z
+        .object({
+          parentDocumentId: z.string().optional()
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      return await prisma.document.findMany({
+        where: {
+          userId: ctx.auth.user.id,
+          parentDocumentId: input?.parentDocumentId ?? null
+        },
+        include: {
+          childDocuments: {
+            where: {
+              isArchived: false
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      })
+    }),
+  create: protectedProcedure
+    .input(
+      z
+        .object({
+          parentDocumentId: z.string().optional()
+        })
+        .optional()
+    )
+    .mutation(({ ctx, input }) => {
+      return prisma.document.create({
+        data: {
+          name: generateSlug(),
+          userId: ctx.auth.user.id,
+          parentDocumentId: input?.parentDocumentId
+        }
+      })
     })
-  }),
-  create: protectedProcedure.mutation(({ ctx }) => {
-    return prisma.document.create({
-      data: {
-        name: generateSlug(),
-        userId: ctx.auth.user.id
-      }
-    })
-  })
 })

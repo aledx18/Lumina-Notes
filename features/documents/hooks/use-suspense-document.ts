@@ -24,7 +24,7 @@ export function useSuspenseDocument(id: string) {
   return useSuspenseQuery(trpc.documents.getOne.queryOptions({ id }))
 }
 /**
- *Hook to create 🏗️ a new workflow
+ *Hook to create 🏗️ a new document
  */
 export function useCreateDocument() {
   const trpc = useTRPC()
@@ -33,19 +33,19 @@ export function useCreateDocument() {
   return useMutation(
     trpc.documents.create.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} created successfully`)
+        toast.success(`Document ${data.name} created successfully`)
         queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
       },
 
       onError: (error) => {
-        console.log(error, `createWorflow error. ${error}`)
-        toast.error(`Error creating workflow ${error.message}`)
+        console.log(error, `createDocument error. ${error}`)
+        toast.error(`Error creating Document ${error.message}`)
       }
     })
   )
 }
 /**
- *Hook to remove 🗑️ a workflow
+ *Hook to remove 🗑️ a document
  */
 // export function useRemoveWorkflow() {
 //   const trpc = useTRPC()
@@ -68,25 +68,26 @@ export function useCreateDocument() {
 //   )
 // }
 /**
- * Hook to update 📝 a workflow name
+ * Hook to update 📝 a document name
  */
-// export function useUpdateWorkflowName() {
-//   const trpc = useTRPC()
-//   const queryClient = useQueryClient()
+export function useUpdateDocumentName() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
-//   return useMutation(
-//     trpc.workflows.updateName.mutationOptions({
-//       onSuccess: (data) => {
-//         toast.success(`Workflow ${data.name} updated successfully`)
-//         queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}))
-//         queryClient.invalidateQueries(
-//           trpc.workflows.getOne.queryFilter({ id: data.id })
-//         )
-//       },
-//       onError: (error) => {
-//         console.log(error, `updateWorflowName error. ${error}`)
-//         toast.error(`Error updating workflow name ${error.message}`)
-//       }
-//     })
-//   )
-// }
+  //check toast execution twice
+  return useMutation(
+    trpc.documents.updateName.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Document ${data.name} updated successfully`)
+        queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+        queryClient.invalidateQueries(
+          trpc.documents.getOne.queryFilter({ id: data.id })
+        )
+      },
+      onError: (error) => {
+        console.log(error, `update document name error. ${error}`)
+        toast.error(`Error updating document name ${error.message}`)
+      }
+    })
+  )
+}
