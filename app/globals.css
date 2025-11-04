@@ -165,6 +165,18 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
+
+@layer base {
+  button:not([disabled]),
+  [role="button"]:not([disabled]) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background-color: oklch(73.71% 0.16311 35.139 / 0.507);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

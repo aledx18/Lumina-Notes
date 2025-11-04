@@ -28,8 +28,14 @@ import {
 import { useSuspenseUser } from '@/features/documents/suspense'
 import { authClient } from '@/lib/auth-client'
 
-export function NavUser() {
-  const { data: user } = useSuspenseUser()
+type UserProps = {
+  name: string
+  email: string
+  image: string | null
+}
+
+export function NavUser({ name, email, image }: UserProps) {
+  //   const { data: user } = useSuspenseUser()
   const router = useRouter()
   const { isMobile } = useSidebar()
 
@@ -43,12 +49,19 @@ export function NavUser() {
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
             >
               <Avatar className='h-8 w-8 rounded-lg'>
-                <AvatarImage src={user.name} alt={user.name} />
+                <AvatarImage
+                  src={
+                    image
+                      ? image
+                      : 'https://avatars.githubusercontent.com/u/38964375?v=4'
+                  }
+                  alt={name}
+                />
                 <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-medium'>{user.name}</span>
-                <span className='truncate text-xs'>{user.email}</span>
+                <span className='truncate font-medium'>{name}</span>
+                <span className='truncate text-xs'>{email}</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
@@ -62,12 +75,12 @@ export function NavUser() {
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={user.name} alt={user.name} />
+                  <AvatarImage src={name} alt={name} />
                   <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-medium'>{user.name}</span>
-                  <span className='truncate text-xs'>{user.email}</span>
+                  <span className='truncate font-medium'>{name}</span>
+                  <span className='truncate text-xs'>{email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

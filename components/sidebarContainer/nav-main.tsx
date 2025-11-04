@@ -4,13 +4,6 @@ import {
   BookOpen,
   Bot,
   ChevronRight,
-  Command,
-  Frame,
-  LifeBuoy,
-  type LucideIcon,
-  MapIcon,
-  PieChart,
-  Send,
   Settings2,
   SquareTerminal
 } from 'lucide-react'

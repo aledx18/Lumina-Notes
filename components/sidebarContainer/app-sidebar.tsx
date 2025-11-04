@@ -2,18 +2,11 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
-  LifeBuoy,
-  MapIcon,
-  PieChart,
-  Send,
   Settings,
   Settings2,
   SquareTerminal
 } from 'lucide-react'
 import { Suspense } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
-import { prefetchUser } from '@/app/server/prefetch'
 import {
   Sidebar,
   SidebarContent,
@@ -23,9 +16,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { HydrateClient } from '@/trpc/server'
+import { caller } from '@/trpc/server'
 import { NavMain } from './nav-main'
-import { NavProjects } from './nav-projects'
 import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
 
@@ -120,14 +112,14 @@ const data = {
   navSecondary: [
     {
       title: 'Settings',
-      url: '#',
+      url: '/settings',
       icon: Settings
     }
   ]
 }
 
 export async function AppSidebar() {
-  prefetchUser()
+  const user = await caller.user.getOne()
 
   return (
     <Sidebar variant='inset' collapsible='icon'>
@@ -150,17 +142,14 @@ export async function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-        <NavProjects />
-        <NavSecondary items={data.navSecondary} className='mt-auto' />
+        <NavSecondary items={data.navSecondary} />
       </SidebarContent>
       <SidebarFooter>
-        <HydrateClient>
-          <ErrorBoundary fallback={<div>Error!</div>}>
-            <Suspense fallback={<div>Loading...</div>}>
-              <NavUser />
-            </Suspense>
-          </ErrorBoundary>
-        </HydrateClient>
+        {user && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <NavUser name={user.name} email={user.email} image={user.image} />
+          </Suspense>
+        )}
       </SidebarFooter>
     </Sidebar>
   )
