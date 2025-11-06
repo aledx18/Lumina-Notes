@@ -5,7 +5,6 @@ import {
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useTRPC } from '@/trpc/client'
-// import { useWorkflowsParams } from './use-workflows-params'
 
 /**
  *Hook to fetch all documents 🚙 use suspense
@@ -13,7 +12,6 @@ import { useTRPC } from '@/trpc/client'
 export function useSuspenseDocuments() {
   const trpc = useTRPC()
   //   const [params] = useWorkflowsParams()
-
   return useSuspenseQuery(trpc.documents.getMany.queryOptions())
 }
 /**
@@ -87,6 +85,26 @@ export function useUpdateDocumentName() {
       onError: (error) => {
         console.log(error, `update document name error. ${error}`)
         toast.error(`Error updating document name ${error.message}`)
+      }
+    })
+  )
+}
+/**
+ * Hook to archive 🔒 a document
+ */
+export function useArchiveDocument() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    trpc.documents.archive.mutationOptions({
+      onSuccess: () => {
+        toast.success(`Document archived successfully`)
+        queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+      },
+      onError: (error) => {
+        console.log(error, `archive document error. ${error}`)
+        toast.error(`Error archiving document ${error.message}`)
       }
     })
   )
