@@ -1,4 +1,4 @@
-import { type LucideIcon } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import Link from 'next/link'
 
 import {
@@ -9,20 +9,20 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar'
 
-export function NavSecondary({
-  items
-}: {
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-  }[]
-}) {
+const data = [
+  {
+    title: 'Settings',
+    url: '/settings',
+    icon: Settings
+  }
+]
+
+export function NavSecondary() {
   return (
     <SidebarGroup className='mt-auto'>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
+          {data.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
                 <Link href={item.url}>

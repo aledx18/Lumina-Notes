@@ -1,12 +1,4 @@
-import {
-  BookOpen,
-  Bot,
-  Command,
-  NotebookPenIcon,
-  Settings,
-  Settings2,
-  SquareTerminal
-} from 'lucide-react'
+import { NotebookPenIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -19,25 +11,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { NavDocuments } from '@/features/documents/components/nav-documents'
-import { prefetchDocuments } from '@/features/documents/server/prefetch'
+import { ContainerTree } from '@/features/documents/components/containerTree'
+
+import {
+  prefetchDocuments,
+  prefetchUser
+} from '@/features/documents/server/prefetch'
 import { caller, HydrateClient } from '@/trpc/server'
 import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
 
-const data = {
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: Settings
-    }
-  ]
-}
-
 export async function AppSidebar() {
   const user = await caller.user.getOne()
   prefetchDocuments()
+  prefetchUser()
   return (
     <Sidebar variant='inset' collapsible='icon'>
       <SidebarHeader>
@@ -61,11 +48,11 @@ export async function AppSidebar() {
         <HydrateClient>
           <ErrorBoundary fallback={<div>Error!</div>}>
             <Suspense fallback={<div>Loading...</div>}>
-              <NavDocuments />
+              <ContainerTree />
             </Suspense>
           </ErrorBoundary>
         </HydrateClient>
-        <NavSecondary items={data.navSecondary} />
+        <NavSecondary />
       </SidebarContent>
       <SidebarFooter>
         {user && (

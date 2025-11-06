@@ -1,6 +1,14 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { PackageOpenIcon } from 'lucide-react'
+
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle
+} from '@/components/ui/empty'
 import {
   useCreateDocument,
   useSuspenseDocuments
@@ -22,14 +30,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
-      <Button className='flex max-w-3xl' onClick={handleCreate}>
-        Create
-      </Button>
-      <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
-        {JSON.stringify(documents)}
-      </div>
-      <div className='bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min' />
+    <div className='flex justify-center items-center'>
+      <Empty className='border bg-muted'>
+        <EmptyHeader>
+          <EmptyMedia className='bg-background' variant='icon'>
+            <PackageOpenIcon className='size-4' />
+          </EmptyMedia>
+        </EmptyHeader>
+        <EmptyTitle>Welcome to Lumina-Notes</EmptyTitle>
+        <EmptyDescription>'No data found'</EmptyDescription>
+      </Empty>
     </div>
   )
 }

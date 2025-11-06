@@ -1,8 +1,9 @@
+import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import EditorHeader from '@/features/documents/components/editor-header'
+import EditorDocument from '@/features/editor/editorDocument'
 import { requireAuth } from '@/lib/auth-utils'
-import { HydrateClient } from '@/trpc/server'
+import { caller, HydrateClient } from '@/trpc/server'
 
 interface Props {
   params: Promise<{ docId: string }>
@@ -11,16 +12,24 @@ interface Props {
 export default async function Page({ params }: Props) {
   await requireAuth()
   const { docId } = await params
+
+  try {
+    await caller.documents.getOne({ id: docId })
+  } catch (e) {
+    notFound()
+    console.error(e)
+  }
+
+  // error.code='P2025'
+
   return (
     <HydrateClient>
-      <ErrorBoundary fallback={<p>Error</p>}>
-        <Suspense fallback={<p>Loading...</p>}>
-          <EditorHeader documentId={docId} />
-          <main className='flex-1'>
-            <div>hola {docId}</div>
-          </main>
-        </Suspense>
-      </ErrorBoundary>
+      {/* <ErrorBoundary FallbackComponent={DocumentErrorBoundary}> */}
+      <Suspense fallback={<p>Loading...</p>}>
+        <EditorHeader documentId={docId} />
+        <EditorDocument documentId={docId} />
+      </Suspense>
+      {/* </ErrorBoundary> */}
     </HydrateClient>
   )
 }
