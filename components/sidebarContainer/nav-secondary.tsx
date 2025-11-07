@@ -2,7 +2,13 @@
 
 import { ArchiveIcon, Settings, Trash2Icon, Undo2Icon } from 'lucide-react'
 import Link from 'next/link'
-
+import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -11,16 +17,16 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar'
 import {
+  useRemoveDocument,
   useSuspenseArchivedDocuments,
   useUnarchiveDocument
 } from '@/features/documents/hooks/use-suspense-document'
-import { Button } from '../ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { ScrollArea } from '../ui/scroll-area'
+import ConfirmModal from '../modals/confirm-modal'
 
 export function NavSecondary() {
   const { data: archivedDocuments, isFetching } = useSuspenseArchivedDocuments()
   const unarchive = useUnarchiveDocument()
+  const remove = useRemoveDocument()
 
   return (
     <SidebarGroup className='mt-auto'>
@@ -28,7 +34,7 @@ export function NavSecondary() {
         <SidebarMenu>
           <SidebarMenuItem>
             <Popover>
-              <PopoverTrigger asChild className='w-full'>
+              <PopoverTrigger asChild className='w-full cursor-pointer'>
                 <SidebarMenuButton
                   className='data-[state=open]:bg-accent data-[state=open]:text-accent-foreground'
                   asChild
@@ -47,6 +53,13 @@ export function NavSecondary() {
                       className='text-sm rounded-sm w-full flex items-center hover:bg-sidebar-accent justify-between gap-y-3'
                     >
                       <span className='truncate pl-1'>{document.name}</span>
+                      {/* todo: add child count ... no muestra hijos de hijos o solo hijos sin el padre*/}
+                      <span className='truncate pl-1'>
+                        {document.childDocuments
+                          .map((child) => child.name)
+                          .join(', ')}
+                      </span>
+
                       <div className='flex'>
                         <Button
                           onClick={() => {
@@ -60,13 +73,21 @@ export function NavSecondary() {
                         >
                           <Undo2Icon />
                         </Button>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          disabled={isFetching}
+                        <ConfirmModal
+                          onConfirm={() => {
+                            remove.mutateAsync({
+                              id: document.id
+                            })
+                          }}
                         >
-                          <Trash2Icon />
-                        </Button>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            disabled={isFetching}
+                          >
+                            <Trash2Icon />
+                          </Button>
+                        </ConfirmModal>
                       </div>
                     </div>
                   ))}
