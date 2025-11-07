@@ -22,6 +22,13 @@ export function useSuspenseDocument(id: string) {
   return useSuspenseQuery(trpc.documents.getOne.queryOptions({ id }))
 }
 /**
+ * Hook to fetch all archived documents 🚙 use suspense
+ */
+export function useSuspenseArchivedDocuments() {
+  const trpc = useTRPC()
+  return useSuspenseQuery(trpc.documents.getArchived.queryOptions())
+}
+/**
  *Hook to create 🏗️ a new document
  */
 export function useCreateDocument() {
@@ -101,10 +108,32 @@ export function useArchiveDocument() {
       onSuccess: () => {
         toast.success(`Document archived successfully`)
         queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+        queryClient.invalidateQueries(trpc.documents.getArchived.queryOptions())
       },
       onError: (error) => {
         console.log(error, `archive document error. ${error}`)
         toast.error(`Error archiving document ${error.message}`)
+      }
+    })
+  )
+}
+/**
+ * Hook to unarchive 📤 a document
+ */
+export function useUnarchiveDocument() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    trpc.documents.unarchive.mutationOptions({
+      onSuccess: () => {
+        toast.success(`Document unarchived successfully`)
+        queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+        queryClient.invalidateQueries(trpc.documents.getArchived.queryOptions())
+      },
+      onError: (error) => {
+        console.log(error, `unarchive document error. ${error}`)
+        toast.error(`Error unarchiving document ${error.message}`)
       }
     })
   )
