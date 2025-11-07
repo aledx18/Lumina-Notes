@@ -14,6 +14,7 @@ import {
 import { ContainerTree } from '@/features/documents/components/containerTree'
 
 import {
+  prefetchArchivedDocuments,
   prefetchDocuments,
   prefetchUser
 } from '@/features/documents/server/prefetch'
@@ -24,6 +25,7 @@ import { NavUser } from './nav-user'
 export async function AppSidebar() {
   const user = await caller.user.getOne()
   prefetchDocuments()
+  prefetchArchivedDocuments()
   prefetchUser()
   return (
     <Sidebar variant='inset' collapsible='icon'>

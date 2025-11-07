@@ -2,6 +2,7 @@
 
 import { inferProcedureOutput } from '@trpc/server'
 import { PlusIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   SidebarGroup,
@@ -23,7 +24,10 @@ export type singleDocument = inferProcedureOutput<
 export function ContainerTree() {
   const createDocument = useCreateDocument()
   // todo : add error handling, loading, etc
-  const { data } = useSuspenseDocuments()
+  const { data, fetchStatus, isFetching } = useSuspenseDocuments()
+  const router = useRouter()
+
+  console.log('fetch status:', fetchStatus, 'is fetching:', isFetching)
 
   const typedData = data as inferProcedureOutput<
     AppRouter['documents']['getMany']
@@ -34,17 +38,17 @@ export function ContainerTree() {
       { parentDocumentId: parentId },
       {
         onError: console.error,
-        onSuccess: (data) => console.log(data)
+        onSuccess: (data) => router.push(`/documents/${data.id}`)
       }
     )
   }
-
   return (
     <>
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarGroupLabel className='flex items-center justify-between gap-2 text-sm mt-4 group'>
             <Button
+              disabled={isFetching}
               size='lg'
               variant='secondary'
               onClick={() => handleCreate()}
@@ -64,6 +68,7 @@ export function ContainerTree() {
                 key={item.id}
                 item={item}
                 onAddChild={() => handleCreate(item.id)}
+                disabled={isFetching}
               />
             ))}
           </SidebarMenu>
