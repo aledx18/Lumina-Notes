@@ -21,3 +21,9 @@ export function prefetchDocuments(params: Input) {
 export function prefetchDocument(id: string) {
   return prefetch(trpc.documents.getOne.queryOptions({ id }))
 }
+/**
+ * Prefetch all archived documents
+ */
+export function prefetchArchivedDocuments(params: Input) {
+  return prefetch(trpc.documents.getArchived.queryOptions(params))
+}
