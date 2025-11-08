@@ -12,7 +12,9 @@ import { useTRPC } from '@/trpc/client'
 export function useSuspenseDocuments() {
   const trpc = useTRPC()
   //   const [params] = useWorkflowsParams()
-  return useSuspenseQuery(trpc.documents.getMany.queryOptions())
+  return useSuspenseQuery(
+    trpc.documents.getMany.queryOptions({ withChildren: true })
+  )
 }
 /**
  * Hook to fetch a single document 🚙 use suspense
@@ -52,26 +54,23 @@ export function useCreateDocument() {
 /**
  *Hook to remove 🗑️ a document
  */
-// export function useRemoveWorkflow() {
-//   const trpc = useTRPC()
-//   const queryClient = useQueryClient()
+export function useRemoveDocument() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
-//   return useMutation(
-//     trpc.workflows.remove.mutationOptions({
-//       onSuccess: (data) => {
-//         toast.success(`Workflow ${data.name} removed successfully`)
-//         queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}))
-//         queryClient.invalidateQueries(
-//           trpc.workflows.getOne.queryFilter({ id: data.id })
-//         )
-//       },
-//       onError: (error) => {
-//         console.log(error, `removeWorflow error. ${error}`)
-//         toast.error(`Error removing workflow ${error.message}`)
-//       }
-//     })
-//   )
-// }
+  return useMutation(
+    trpc.documents.remove.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Document ${data.name} removed successfully`)
+        queryClient.invalidateQueries(trpc.documents.getArchived.queryOptions())
+      },
+      onError: (error) => {
+        console.log(error, `remove document error. ${error}`)
+        toast.error(`Error removing Document ${error.message}`)
+      }
+    })
+  )
+}
 /**
  * Hook to update 📝 a document name
  */
@@ -79,7 +78,7 @@ export function useUpdateDocumentName() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  //check toast execution twice
+  //check toast execution twice in production
   return useMutation(
     trpc.documents.updateName.mutationOptions({
       onSuccess: (data) => {
@@ -102,13 +101,17 @@ export function useUpdateDocumentName() {
 export function useArchiveDocument() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-
   return useMutation(
     trpc.documents.archive.mutationOptions({
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success(`Document archived successfully`)
         queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
         queryClient.invalidateQueries(trpc.documents.getArchived.queryOptions())
+        queryClient.invalidateQueries(
+          trpc.documents.getOne.queryOptions({
+            id: data.id
+          })
+        )
       },
       onError: (error) => {
         console.log(error, `archive document error. ${error}`)
@@ -126,10 +129,13 @@ export function useUnarchiveDocument() {
 
   return useMutation(
     trpc.documents.unarchive.mutationOptions({
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success(`Document unarchived successfully`)
         queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
         queryClient.invalidateQueries(trpc.documents.getArchived.queryOptions())
+        queryClient.invalidateQueries(
+          trpc.documents.getOne.queryOptions({ id: data.id })
+        )
       },
       onError: (error) => {
         console.log(error, `unarchive document error. ${error}`)
