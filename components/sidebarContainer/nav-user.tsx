@@ -25,7 +25,6 @@ import {
   SidebarMenuItem,
   useSidebar
 } from '@/components/ui/sidebar'
-import { useSuspenseUser } from '@/features/documents/suspense'
 import { authClient } from '@/lib/auth-client'
 
 type UserProps = {

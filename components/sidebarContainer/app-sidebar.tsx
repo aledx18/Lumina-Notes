@@ -15,8 +15,7 @@ import { ContainerTree } from '@/features/documents/components/containerTree'
 
 import {
   prefetchArchivedDocuments,
-  prefetchDocuments,
-  prefetchUser
+  prefetchDocuments
 } from '@/features/documents/server/prefetch'
 import { caller, HydrateClient } from '@/trpc/server'
 import { NavSecondary } from './nav-secondary'
@@ -24,9 +23,10 @@ import { NavUser } from './nav-user'
 
 export async function AppSidebar() {
   const user = await caller.user.getOne()
+
   prefetchDocuments()
   prefetchArchivedDocuments()
-  prefetchUser()
+
   return (
     <Sidebar variant='inset' collapsible='icon'>
       <SidebarHeader>

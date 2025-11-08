@@ -6,8 +6,8 @@ import { HydrateClient } from '@/trpc/server'
 import HomePage from '../home-page'
 
 export default async function Home() {
-  await requireAuth()
-  prefetchDocuments()
+  //   prefetchDocuments()
+
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<div>Error!</div>}>
