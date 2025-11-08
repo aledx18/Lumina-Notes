@@ -18,12 +18,39 @@ export const documentRouter = createTRPCRouter({
       return document
     }),
   getMany: protectedProcedure
-    .input(z.object({ parentDocumentId: z.string().optional() }).optional())
+    .input(
+      z
+        .object({
+          parentDocumentId: z.string().optional(),
+          withChildren: z.boolean().optional()
+        })
+        .optional()
+    )
     .query(async ({ ctx, input }) => {
       const userId = ctx.auth.user.id
       const parentId = input?.parentDocumentId ?? null
+      const withChildren = input?.withChildren ?? false
 
-      return await getDocumentsFlat(userId, parentId)
+      // Si se piden los documentos con hijos → usar la función recursiva
+      if (withChildren) {
+        return await getDocumentsFlat(userId, parentId)
+      }
+
+      const docs = await prisma.document.findMany({
+        where: {
+          userId,
+          isArchived: false,
+          parentDocumentId: parentId
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      })
+
+      return docs.map((doc) => ({
+        ...doc,
+        childDocuments: []
+      }))
     }),
   getArchived: protectedProcedure
     .input(z.object({ parentDocumentId: z.string().optional() }).optional())
@@ -33,6 +60,9 @@ export const documentRouter = createTRPCRouter({
           userId: ctx.auth.user.id,
           isArchived: true,
           parentDocumentId: input?.parentDocumentId ?? null
+        },
+        include: {
+          childDocuments: true
         }
       })
     }),
@@ -76,16 +106,16 @@ export const documentRouter = createTRPCRouter({
         }
       })
     }),
-  archive: protectedProcedure
+  archive: protectedProcedure // todo: archiva solo documentos padres
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await setArchivedStateRecursively(input.id, ctx.auth.user.id, true)
-      return { success: true }
+      return { id: input.id }
     }),
   unarchive: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await setArchivedStateRecursively(input.id, ctx.auth.user.id, false)
-      return { success: true }
+      return { id: input.id }
     })
 })
