@@ -2,6 +2,7 @@
 
 import { ArchiveIcon, Settings, Trash2Icon, Undo2Icon } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -26,7 +27,9 @@ import ConfirmModal from '../modals/confirm-modal'
 export function NavSecondary() {
   const { data: archivedDocuments, isFetching } = useSuspenseArchivedDocuments()
   const unarchive = useUnarchiveDocument()
+
   const remove = useRemoveDocument()
+  const router = useRouter()
 
   return (
     <SidebarGroup className='mt-auto'>
@@ -46,55 +49,75 @@ export function NavSecondary() {
                 </SidebarMenuButton>
               </PopoverTrigger>
               <PopoverContent forceMount side='right' className='w-72 p-1'>
-                <ScrollArea className='h-44 px-3'>
-                  {archivedDocuments.map((document) => (
-                    <div
-                      key={document.id}
-                      className='text-sm rounded-sm w-full flex items-center hover:bg-sidebar-accent justify-between gap-y-3'
-                    >
-                      <span className='truncate pl-1'>{document.name}</span>
-                      {/* todo: add child count ... no muestra hijos de hijos o solo hijos sin el padre*/}
-                      <span className='truncate pl-1'>
-                        {document.childDocuments
-                          .map((child) => child.name)
-                          .join(', ')}
-                      </span>
-
-                      <div className='flex'>
-                        <Button
-                          onClick={() => {
-                            unarchive.mutateAsync({
-                              id: document.id
-                            })
-                          }}
-                          variant='ghost'
-                          size='icon'
-                          disabled={isFetching}
+                {archivedDocuments.length > 0 ? (
+                  <>
+                    <ScrollArea className='h-44 px-3'>
+                      {archivedDocuments.map((document) => (
+                        <div
+                          key={document.id}
+                          className='text-sm rounded-sm flex items-center hover:bg-sidebar-accent justify-between gap-y-3'
                         >
-                          <Undo2Icon />
-                        </Button>
-                        <ConfirmModal
-                          onConfirm={() => {
-                            remove.mutateAsync({
-                              id: document.id
-                            })
-                          }}
-                        >
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            disabled={isFetching}
+                          <Link
+                            href={`/documents/${document.id}`}
+                            className='w-full'
                           >
-                            <Trash2Icon />
-                          </Button>
-                        </ConfirmModal>
-                      </div>
-                    </div>
-                  ))}
-                </ScrollArea>
-                <p className='text-xs text-muted-foreground pl-4 py-2'>
-                  Last edited by: ...
-                </p>
+                            <span className='truncate pl-1'>
+                              {document.name}
+                            </span>
+                            {/* todo: add child count ... no muestra hijos de hijos o solo hijos sin el padre*/}
+                            <span className='truncate pl-1'>
+                              {document.childDocuments
+                                .map((child) => child.name)
+                                .join(', ')}
+                            </span>
+                          </Link>
+
+                          <div className='flex'>
+                            <Button
+                              onClick={() =>
+                                unarchive.mutateAsync(
+                                  { id: document.id },
+                                  {
+                                    onSuccess: () => {
+                                      router.push(`/documents/${document.id}`)
+                                    }
+                                  }
+                                )
+                              }
+                              variant='ghost'
+                              size='icon'
+                              disabled={isFetching}
+                            >
+                              <Undo2Icon />
+                            </Button>
+                            <ConfirmModal
+                              onConfirm={() => {
+                                remove.mutateAsync({
+                                  id: document.id
+                                })
+                              }}
+                            >
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                disabled={isFetching}
+                              >
+                                <Trash2Icon />
+                              </Button>
+                            </ConfirmModal>
+                          </div>
+                        </div>
+                      ))}
+                    </ScrollArea>
+                    <p className='text-xs text-muted-foreground pl-4 py-2'>
+                      Last edited by: ...
+                    </p>
+                  </>
+                ) : (
+                  <div className='px-3 h-20 flex items-center justify-center text-muted-foreground text-sm'>
+                    <p>No documents found.</p>
+                  </div>
+                )}
               </PopoverContent>
             </Popover>
           </SidebarMenuItem>
