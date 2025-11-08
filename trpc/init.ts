@@ -4,17 +4,31 @@ import { cache } from 'react'
 import superjson from 'superjson'
 import { auth } from '@/lib/auth'
 // import { polarClient } from '@/lib/polar'
-export const createTRPCContext = cache(async () => {
+
+export type TRPCContext = {
+  session: Awaited<ReturnType<typeof auth.api.getSession>> | null
+  userId: string | null
+}
+
+export const createTRPCContext = cache(async (): Promise<TRPCContext> => {
   /**
    * @see: https://trpc.io/docs/server/context
+   *
    */
-  return { userId: 'user_123' }
+
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+  return {
+    session,
+    userId: session?.user?.id || null
+  }
 })
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
 // is common in i18n libraries.
-const t = initTRPC.create({
+const t = initTRPC.context<TRPCContext>().create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
@@ -25,9 +39,11 @@ export const createTRPCRouter = t.router
 export const createCallerFactory = t.createCallerFactory
 export const baseProcedure = t.procedure
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const session =
+    ctx.session ||
+    (await auth.api.getSession({
+      headers: await headers()
+    }))
 
   if (!session) {
     throw new TRPCError({
