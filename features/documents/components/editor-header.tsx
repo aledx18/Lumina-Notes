@@ -1,7 +1,8 @@
 'use client'
 
-import { EditIcon, SaveIcon } from 'lucide-react'
+import { EditIcon, SaveIcon, Trash2Icon, Undo2Icon } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import {
   Breadcrumb,
@@ -13,12 +14,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { Document } from '@/lib/generated/prisma'
 import {
+  useRemoveDocument,
   useSuspenseDocument,
+  useUnarchiveDocument,
   useUpdateDocumentName
 } from '../hooks/use-suspense-document'
 
-export function EditorBreadcrumbs({ documentId }: { documentId: string }) {
+export function EditorBreadcrumbs({ document }: { document: Document }) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -28,7 +32,7 @@ export function EditorBreadcrumbs({ documentId }: { documentId: string }) {
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <EditorHeaderInput documentId={documentId} />
+        <EditorHeaderInput document={document} />
       </BreadcrumbList>
     </Breadcrumb>
   )
@@ -44,9 +48,7 @@ export function EditorSaveButton() {
   )
 }
 
-export function EditorHeaderInput({ documentId }: { documentId: string }) {
-  const { data: document } = useSuspenseDocument(documentId)
-
+export function EditorHeaderInput({ document }: { document: Document }) {
   const [name, setName] = useState(document.name)
   const [isEditing, setIsEditing] = useState(false)
 
@@ -75,7 +77,7 @@ export function EditorHeaderInput({ documentId }: { documentId: string }) {
 
     try {
       await updateName.mutateAsync({
-        id: documentId,
+        id: document.id,
         name
       })
     } catch (e) {
@@ -125,15 +127,62 @@ export function EditorHeaderInput({ documentId }: { documentId: string }) {
 }
 
 export default function EditorHeader({ documentId }: { documentId: string }) {
+  const { data: document, isFetching } = useSuspenseDocument(documentId)
+  const router = useRouter()
+  const unarchive = useUnarchiveDocument()
+  const remove = useRemoveDocument()
+
   return (
-    <header className='flex h-16 shrink-0 items-center gap-2'>
-      <div className='flex items-center justify-between w-full px-4 '>
+    <header className='flex shrink-0 items-center flex-col'>
+      <div className='flex h-16 items-center justify-between w-full px-4 '>
         <div className='flex gap-2 items-center'>
           <SidebarTrigger className='-ml-1' />
-          <EditorBreadcrumbs documentId={documentId} />
+          <EditorBreadcrumbs document={document} />
         </div>
         <EditorSaveButton />
       </div>
+      {document.isArchived && (
+        <div className='bg-rose-400 w-full flex items-center justify-center py-2'>
+          <div className='flex items-center gap-x-10'>
+            <div className='flex gap-x-2'>
+              <Button
+                onClick={() => {
+                  unarchive.mutateAsync(
+                    {
+                      id: document.id
+                    },
+                    {
+                      onSuccess: () => {
+                        router.push(`/documents/${document.id}`)
+                      }
+                    }
+                  )
+                }}
+                variant='outline'
+                size='sm'
+                disabled={isFetching}
+              >
+                Restore
+                <Undo2Icon />
+              </Button>
+
+              <Button
+                onClick={() => {
+                  remove.mutateAsync({
+                    id: document.id
+                  })
+                }}
+                variant='outline'
+                size='sm'
+                disabled={isFetching}
+              >
+                Delete
+                <Trash2Icon />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
