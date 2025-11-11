@@ -12,7 +12,6 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar'
 import { ContainerTree } from '@/features/documents/components/containerTree'
-
 import {
   prefetchArchivedDocuments,
   prefetchDocuments

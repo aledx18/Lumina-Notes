@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
-import { Geist_Mono, Outfit } from 'next/font/google'
+import { Architects_Daughter, Geist_Mono, Outfit } from 'next/font/google'
 import './globals.css'
+import { ModalProviders } from '@/components/modals/modal-providers'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { EdgeStoreProvider } from '@/lib/edgestore'
 import { TRPCReactProvider } from '@/trpc/client'
 
 const geistSans = Outfit({
@@ -13,6 +15,12 @@ const geistSans = Outfit({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin']
+})
+
+const geistNotebooks = Architects_Daughter({
+  variable: '--font-notebooks',
+  subsets: ['latin'],
+  weight: ['400']
 })
 
 export const metadata: Metadata = {
@@ -29,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${geistNotebooks.variable}`}
       >
         <TRPCReactProvider>
           <ThemeProvider
@@ -38,8 +46,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
-            <Toaster />
+            <EdgeStoreProvider>
+              <ModalProviders />
+              {children}
+              <Toaster />
+            </EdgeStoreProvider>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

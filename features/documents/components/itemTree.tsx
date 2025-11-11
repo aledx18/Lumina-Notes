@@ -71,10 +71,10 @@ export default function ItemTree({
 
   return (
     <SidebarMenuItem>
-      <Collapsible className='group/item hover:[&_.item-action]:visible'>
+      <Collapsible>
         <div
           className={cn(
-            'flex w-full select-none items-center gap-2 overflow-hidden rounded-md text-left text-sm outline-hidden ring-sidebar-ring',
+            'flex w-full select-none items-center gap-2 overflow-hidden rounded-md text-left text-sm outline-hidden ring-sidebar-ring group/item hover:[&_.item-action]:opacity-100',
             isActive && 'bg-sidebar-accent text-sidebar-accent-foreground'
           )}
         >
@@ -91,11 +91,10 @@ export default function ItemTree({
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction
                   className={cn(
-                    'item-action static invisible right-1.5 top-1.5 hover:bg-sidebar-accent',
+                    'item-action static opacity-0 right-1.5 top-1.5 hover:bg-sidebar-accent',
                     isActive && 'hover:bg-card',
                     disabled && 'opacity-50'
                   )}
-                  onClick={() => {}}
                   disabled={disabled}
                 >
                   <MoreHorizontalIcon />
@@ -124,7 +123,7 @@ export default function ItemTree({
 
             <SidebarMenuAction
               className={cn(
-                'item-action static invisible right-1.5 top-1.5 hover:bg-sidebar-accent',
+                'item-action static opacity-0 right-1.5 top-1.5 hover:bg-sidebar-accent',
                 isActive && 'hover:bg-card',
                 disabled && 'opacity-50'
               )}

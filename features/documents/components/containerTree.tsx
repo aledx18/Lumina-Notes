@@ -24,10 +24,8 @@ export type singleDocument = inferProcedureOutput<
 export function ContainerTree() {
   const createDocument = useCreateDocument()
   // todo : add error handling, loading, etc
-  const { data, fetchStatus, isFetching } = useSuspenseDocuments()
+  const { data, isLoading } = useSuspenseDocuments()
   const router = useRouter()
-
-  console.log('fetch status:', fetchStatus, 'is fetching:', isFetching)
 
   const typedData = data as inferProcedureOutput<
     AppRouter['documents']['getMany']
@@ -48,7 +46,7 @@ export function ContainerTree() {
         <SidebarGroupContent>
           <SidebarGroupLabel className='flex items-center justify-between gap-2 text-sm mt-4 group'>
             <Button
-              disabled={isFetching}
+              disabled={isLoading}
               size='lg'
               variant='secondary'
               onClick={() => handleCreate()}
@@ -67,8 +65,8 @@ export function ContainerTree() {
               <ItemTree
                 key={item.id}
                 item={item}
-                onAddChild={() => handleCreate(item.id)}
-                disabled={isFetching}
+                onAddChild={handleCreate}
+                disabled={isLoading}
               />
             ))}
           </SidebarMenu>
