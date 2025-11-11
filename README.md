@@ -1,4 +1,4 @@
-# Lumina-Notes
+# Lumina-Notes 🗒️
 
 A note-taking application built with Next.js and TypeScript.
 
@@ -35,12 +35,6 @@ Follow these steps to get Lumina-Notes up and running on your local machine:
 
     ```bash
     npm install
-    ```
-
-    Using yarn:
-
-    ```bash
-    yarn install
     ```
 
     Using pnpm:
@@ -146,16 +140,6 @@ The application can be configured via environment variables.  These variables ar
 *   **Authentication Secrets:**  Set the secrets used for JWT signing.
 *   **EdgeStore API Keys:**  Provide the API keys for accessing your EdgeStore buckets.
 *   **TRPC API Endpoint:**  The endpoint for the TRPC API is `/api/trpc`.
-
-## Contributing Guidelines
-
-We welcome contributions to Lumina-Notes!  To contribute, please follow these steps:
-
-1.  Fork the repository.
-2.  Create a new branch for your feature or bug fix.
-3.  Make your changes.
-4.  Write tests to cover your changes.
-5.  Submit a pull request.
 
 ## License Information
 
