@@ -3,7 +3,7 @@
 A note-taking application built with Next.js and TypeScript.
 
 <p align="center">
-  <a href="https://perfect-fit-woad.vercel.app">
+  <a href="https://lumina-notes-pi.vercel.app">
     <img src="https://files.edgestore.dev/6cais180wsi0m009/publicFiles/_public/b9209cc4-8797-4773-b529-52aaca873826.png" width="500">
  </a>
 </p>
