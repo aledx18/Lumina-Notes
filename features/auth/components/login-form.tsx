@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -63,6 +62,14 @@ export default function LoginForm() {
     )
   }
 
+  //   const authClient = createAuthClient()
+
+  //   const signIn = async () => {
+  //     await authClient.signIn.social({
+  //       provider: 'github'
+  //     })
+  //   }
+
   const isPending = form.formState.isSubmitting
 
   return (
@@ -78,7 +85,7 @@ export default function LoginForm() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className='grid gap-6'>
-                <div className='flex flex-col gap-4'>
+                {/* <div className='flex flex-col gap-4'>
                   <Button
                     disabled={isPending}
                     type='button'
@@ -107,7 +114,7 @@ export default function LoginForm() {
                     />
                     Continue with Google
                   </Button>
-                </div>
+                </div> */}
                 <FieldSeparator className='*:data-[slot=field-separator-content]:bg-card'>
                   Or continue with
                 </FieldSeparator>
