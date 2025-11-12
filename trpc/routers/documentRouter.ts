@@ -83,6 +83,7 @@ export const documentRouter = createTRPCRouter({
         }
       })
     }),
+  //todo : only 1 update for all properties
   updateName: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(({ ctx, input }) => {
@@ -93,6 +94,45 @@ export const documentRouter = createTRPCRouter({
         },
         data: {
           name: input.name
+        }
+      })
+    }),
+  updateContent: protectedProcedure
+    .input(z.object({ id: z.string(), content: z.string().optional() }))
+    .mutation(({ ctx, input }) => {
+      return prisma.document.update({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id
+        },
+        data: {
+          content: input.content ?? null
+        }
+      })
+    }),
+  updateIcon: protectedProcedure
+    .input(z.object({ id: z.string(), icon: z.string().optional() }))
+    .mutation(({ ctx, input }) => {
+      return prisma.document.update({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id
+        },
+        data: {
+          icon: input.icon ?? null
+        }
+      })
+    }),
+  updateCoverImage: protectedProcedure
+    .input(z.object({ id: z.string(), coverImage: z.string().optional() }))
+    .mutation(({ ctx, input }) => {
+      return prisma.document.update({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id
+        },
+        data: {
+          coverImage: input.coverImage ?? null
         }
       })
     }),

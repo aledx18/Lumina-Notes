@@ -96,6 +96,54 @@ export function useUpdateDocumentName() {
   )
 }
 /**
+ * Hook to update 📝 a Icon
+ */
+export function useUpdateDocumentIcon() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  //check toast execution twice in production
+  return useMutation(
+    trpc.documents.updateIcon.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Document ${data.name} updated successfully`)
+        queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+        queryClient.invalidateQueries(
+          trpc.documents.getOne.queryOptions({ id: data.id })
+        )
+      },
+      onError: (error) => {
+        console.log(error, `update document icon error. ${error}`)
+        toast.error(`Error updating document icon ${error.message}`)
+      }
+    })
+  )
+}
+/**
+ * Hook to update 📝 a CoverImage
+ */
+export function useUpdateDocumentCoverImage() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  //check toast execution twice in production
+  return useMutation(
+    trpc.documents.updateCoverImage.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Document ${data.name} updated successfully`)
+        queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+        queryClient.invalidateQueries(
+          trpc.documents.getOne.queryOptions({ id: data.id })
+        )
+      },
+      onError: (error) => {
+        console.log(error, `update document coverImage error. ${error}`)
+        toast.error(`Error updating document coverImage ${error.message}`)
+      }
+    })
+  )
+}
+/**
  * Hook to archive 🔒 a document
  */
 export function useArchiveDocument() {
@@ -140,6 +188,30 @@ export function useUnarchiveDocument() {
       onError: (error) => {
         console.log(error, `unarchive document error. ${error}`)
         toast.error(`Error unarchiving document ${error.message}`)
+      }
+    })
+  )
+}
+/**
+ * Hook to update 📝 a document content
+ */
+export function useUpdateDocumentContent() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  //check toast execution twice in production
+  return useMutation(
+    trpc.documents.updateContent.mutationOptions({
+      onSuccess: (data) => {
+        // toast.success(`Document content updated successfully`)
+        // queryClient.invalidateQueries(trpc.documents.getMany.queryOptions())
+        queryClient.invalidateQueries(
+          trpc.documents.getOne.queryOptions({ id: data.id })
+        )
+      },
+      onError: (error) => {
+        console.log(error, `update document content error. ${error}`)
+        toast.error(`Error updating document content ${error.message}`)
       }
     })
   )

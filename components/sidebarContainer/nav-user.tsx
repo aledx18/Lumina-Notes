@@ -49,11 +49,7 @@ export function NavUser({ name, email, image }: UserProps) {
             >
               <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarImage
-                  src={
-                    image
-                      ? image
-                      : 'https://avatars.githubusercontent.com/u/38964375?v=4'
-                  }
+                  src={image ? image : 'https://placehold.co/600x400'}
                   alt={name}
                 />
                 <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
