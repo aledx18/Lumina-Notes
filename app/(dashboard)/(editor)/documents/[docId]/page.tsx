@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import EditorHeader from '@/features/documents/components/editor-header'
-import EditorDocument from '@/features/editor/editorDocument'
+import { Skeleton } from '@/components/ui/skeleton'
+import Cover from '@/features/editor/components/cover'
+import EditorContainer from '@/features/editor/editor-container'
 import { requireAuth } from '@/lib/auth-utils'
 import { caller, HydrateClient } from '@/trpc/server'
 
@@ -24,12 +25,24 @@ export default async function Page({ params }: Props) {
 
   return (
     <HydrateClient>
-      {/* <ErrorBoundary FallbackComponent={DocumentErrorBoundary}> */}
-      <Suspense fallback={<p>Loading...</p>}>
-        <EditorHeader documentId={docId} />
-        <EditorDocument documentId={docId} />
+      <Suspense
+        fallback={
+          <>
+            <Skeleton className='h-4 w-[60%]' />
+            <Cover.skeleton />
+            <div className='md:max-w-3xl lg:max-w-4xl mx-auto mt-10'>
+              <div className='space-y-4 pl-8 pt-4'>
+                <Skeleton className='h-14 w-[50%]' />
+                <Skeleton className='h-4 w-[80%]' />
+                <Skeleton className='h-4 w-[40%]' />
+                <Skeleton className='h-4 w-[60%]' />
+              </div>
+            </div>
+          </>
+        }
+      >
+        <EditorContainer documentId={docId} />
       </Suspense>
-      {/* </ErrorBoundary> */}
     </HydrateClient>
   )
 }

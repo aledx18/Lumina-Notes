@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/noImgElement: <no-Image for nextjs> */
 'use client'
 
 import {
@@ -6,7 +7,6 @@ import {
   UploadCloudIcon,
   XIcon
 } from 'lucide-react'
-import Image from 'next/image'
 import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { type DropzoneOptions, useDropzone } from 'react-dropzone'
 import { cn } from '@/lib/utils'
@@ -177,7 +177,7 @@ const SingleImageDropzone = forwardRef<
         <input ref={ref} {...getInputProps()} {...props} />
 
         {displayUrl ? (
-          <Image
+          <img
             className='h-full w-full rounded-md object-cover'
             src={displayUrl}
             alt={fileState?.file.name ?? 'uploaded image'}
